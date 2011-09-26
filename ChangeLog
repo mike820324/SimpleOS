@@ -1,0 +1,69 @@
+2011/8/04
+1.Add some macro to handle the string printing and cursor handling
+	a.macro print_char text
+   		print a single character in the screen
+
+	b.macro position_4_print position
+		calculate the position byte of the text mode according to coordinate.
+
+	c.macro position_4_cursor position
+		calculate the position byte of the cursor according to coordinate
+
+	d.macro set_cursor position
+        	set the cursor
+
+servel bugs discovered
+1. the update_text_coordinate cannot handle the row properly when the column reach the max
+2. position_4_print macro: when the row is not zero or the column number is too big, the output is weird. 
+   *bug fixed: a row is 160 bytes instead of 80 bytes
+
+2011/8/03
+Add:
+in Kernel.S 
+a simple print_msg driver in 16 bit realmode kernel.
+Now the kernel can print text without using bios interrupt.
+
+2011/07/12
+1.
+modify:
+I modify some of the code in the bootloader. Add some Macro.
+reason;
+increase the readability.
+
+2011/06/28
+1.
+add:
+new function called (lba2chs) in the bootloader.
+reason:
+this way it can calculate the lba mode to CHS mode.
+
+2.
+bug:the algorithm that I write in the lba2chs is wrong. and
+    casusing the bootloader can't load the kernel image into 
+    memory.
+fix: 
+	a. addw $1, %ax => addw $1, %dx
+	b. del servel code since they are useless
+           (when claculating head, the first two lines no need to be calculate again)
+	c. add xor %dx, %dx before divw $HPT
+P.S there is one knowing bug, that is when the Cylider number is too big,
+    it will overflow the register.
+
+3.
+add: add severl additional feature.
+reason: increase the reliablility of the bootloader.
+	a. load the root dir into the disk buffer.
+	b. search the kernel.bin.
+	c. after finding the kernel.bin, get the fat number.
+	d. calculate the FAT of the kernel image.
+
+2011/06/27
+This is the first version of the Simple OS project.
+1.
+bug: code mistyping cause the bootloader crash.
+fixed: 
+in kernel.S
+add '$' before the immediate value in print_msg.
+in boot.S
+add int $0x13 before the long jump 
+
