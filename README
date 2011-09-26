@@ -1,5 +1,11 @@
 This is the a simple x86-based OS project. The following are some breif description.
 
+Tools needed:
+gcc
+gas
+ld
+qemu
+
 1. FILES: there are five folders and three text files.
 	a. boot: Directory
 	contains bootloader source code and readme of the bootloader.
