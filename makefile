@@ -6,9 +6,11 @@ LDFLAGS=-Ttext=0x0 --oformat binary
 all: boot.bin kernel.bin
 
 boot.bin: ./boot/boot.o
+	@[ -d ./bin ] || mkdir bin  
 	${LD} ${LDFLAGS} ./boot/boot.o -o ./bin/boot.bin
 
 kernel.bin: ./kernel/kernel.o
+	@[ -d ./bin ] || mkdir bin
 	${LD} ${LDFLAGS} ./kernel/kernel.o -o ./bin/kernel.bin
 
 ./boot/boot.o:
