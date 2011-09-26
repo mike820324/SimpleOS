@@ -41,9 +41,11 @@ qemu
 	    mount the floppy into a directory, 
 	    therefore need root privelege.
 
-3. dump.sh:
-	there are only two optins right now.
-	a. dump or use -d: dump the binary file into the dump directory.
-	b. remove or use -r: remove the dump files.
+3. script:
+	there are three scripts in the script folder.
+	a. run.sh: run the qemu and the kernel.
+	b. dump.sh: dump the binary file for debug.
+	c. debug.sh: generate a debug file for gdb for debug.
 
+	
 	
