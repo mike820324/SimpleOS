@@ -1,0 +1,211 @@
+A. INTRODUCTION:
+the boot.S is the bootloader of my os. It will load the kernel or the second statge loader into the main memory. 
+Before start programming, there is some background knowlege and tools that need to introduce first.
+
+B. TOOL:
+	gnu c compiler (gcc): since I use at&t syntax to write the assembly 
+	                      I need a assembler to compile the source code to obj code.
+
+	linker (ld): to link the obj code to raw binary.
+
+	mkdosfs: to create the virtual floppy disk and the fat12 file system.
+
+	qemu : a very good emulator that can emulate intel x86 archtecture. 
+	       Moreover, qemu can debug the program you write with gdb.
+
+	gdb : use it with qemu to debug the program.
+
+	xxd : a tool that can dump the disk content. It is useful when debuging the program.
+	
+	P.S my enviroment is ubuntu 10.10. Therefore, some of the tool is already being installed. :D
+
+
+C. BACKGROUND KNOWLEGE:
+1. the FAT 12 file system: the following figure is how the file system look like.
+
+=====================================<FIGURE 1>======================================
+    1         9           9             14             ???
+|--MBR---|---FAT1----|---FAT2----|---RootDir----|----User Data-----|
+0       2100h                   2600h          4200h
+
+
+	a. MBR : it is the boot sector.
+	b. FAT : the File Allocation Table. This area will keep what clusters a program is using. 
+	         Since the file system I'm using is FAT 12, the size of a FAT is 12 bytes. Therefore, 
+			 I need to write a routine(funtion ) to handle this problem. 
+	c. Root Directory: also called the FDB(File discription block ), in this area all the fields of a file we be recored. 
+	                   such as the file name, time, entry point and so on. 
+					   The full discription of FDB plz reference http://home.educities.edu.tw/wanker742126/asm/ch18.html.
+
+
+2. bios interrupt: the bios interrupt is the most important things in the bootloader. 			 
+                   In this part only need to understand some of the interrupt, 
+				   such as int 13h, and int 10h etc.
+		a. read disk to memory.
+		   int 0x13
+		   ah=02; al=how many sector to read into memory.
+		   dh= head number; dl= what kind of disk drive.(0 for floppy disk);
+		   ch= track number; cl= sector number;
+		   es:bx= base+offset. The memory to write in.
+		
+		b. print
+		   int 0x10	   
+		   ah=0xe; al= character
+        	
+		c. reset disk
+           	   int 0x13
+           	   ax=0
+           	   dl=what kind of disk drive.(0 for floppy disk)
+
+		d. reboot
+		   int 0x19
+		   ax=0
+		   
+D. BOOTLOADER SOURCE CODE DESCRIPTION:
+
+	In my bootloader, here is how the program works.
+	
+	1. set the segment register. since the entry point of the bootloader is 0x7c00. I set DS ES to 0x7c0. 
+	   set SS to 0x9e0 and sp to 4096. The reason why setting the SS to 0x9e0 is that I need a 8kb disk buffer.
+	   The memory layout of the bootloader is below
+	   
+	===============================<FIGURE 2>======================================	   
+	|----MBR(512 bytes)----|------disk buffer(8kb)------|-------real mode stack(4kb)--------|
+	0x7c00                 0x7e00                       0x9e00
+	
+	An alternative way is to use the "ld" to set the base address to 0x7c00.
+	By using the following command: 
+	ld -Ttext=0x7c00 --oformat binary $boot_obj -o $boot_bin
+
+	2. Load the whole RootDir into the disk buffer by using int 0x13 ah=02 bios routine. 
+	   (start from the load_root_dir label)
+	   The reason to do this is because I need to find the kernel binary dynamicaly.
+	   The following is the c pseudocode.
+	   
+	   ====================<PSEUDOCODE>===============================
+	   load_root_dir:
+	                 bios_13(%ah=02);
+	                 if(bios_13_failed())
+						call reset floppy;						
+						if(reset_failed())
+							reboot(); 		//since double error
+						else goto load_root_dir;
+					 else
+					   goto search_root_dir
+		==================<END>=======================================
+		
+	3. Get the FAT of the kernel binary. 
+	   There are 224 entries of the RootDir. Therefore I need to search them all.
+	   There are 32 bytes for each entries, but only two fields that is important in this program.
+	   The "name (11 bytes first field)" and the "FAT(2 bytes. offset 0x1a from the first field)".
+	   Following is the pseudocode of search_root_dir, next_root_entry, found_image.
+	   
+	   ====================<PSEUDOCODE>===============================
+	   search_root_dir:
+		   reg16 counter;
+	       for(i=223;i>0;i--){
+			    for(j=10;j>=0;j--){
+					cmpsb(es:di,ds:si);
+				}
+				if(find_binary){
+					counter=i;
+					break;
+				}
+				else continue;
+			}
+		found_image:
+			entry=224-counter;
+			offset=(entry*0x20+0x1a);
+			address= disk_buffer+offset;
+			FAT=*(address);
+		==================<END>=======================================
+		
+	4. load the whole FAT1 into disk buffer.
+	   start from read_FAT label.
+	   The pseudocode is the same as load_root_dir. 
+	   
+	5. Find how many FAT(Sectors) the binary image is using.
+	   If the current FAT value is fff, means it is the last sector.
+	   If it is a number, check the FAT of that number.
+	   ex. 
+	   FAT 2 = 003
+	   check FAT 3
+	   FAT 3 = 005
+	   check FAT 5
+	   FAT 5 = fff
+	   end
+	   totally used three sector.
+	   
+	   Since I'm using the FAT12 filesystem. 
+	   I need to do some simple math to calculate the FAT. 
+	   
+	   ===================<FAT EXAMPLE>===================================
+	   fo ff ff 00 40 00 05 60 00 ff 0f 00
+	   0  1  2  3  4  5  6  7  8  9  A  B
+	   =====================<END>========================================
+	   
+	   The calculation of the FAT12 is quite tricky. (Intel is little endian) 
+	   FAT 0 : get word from 00,01 => ff f0 => mask the 4 bits of MSB => ff0 
+	   FAT 1 : get word from 01,02 => ff ff => shift right 4 bits => fff  
+	   FAT 2 : get word from 03,04 => 40 00 => mask the 4 bits of MSB => 000
+	   FAT 3 : get word from 04,05 => 00 40 => shift right 4 bits => 004
+	   FAT 4 : get word from 06,07 => 60 05 => mask the 4 bits of MSB => 005
+	   FAT 5 : get word from 07,08 => 00 60 => shift right 4 bits => 006
+	                              ....
+	   Assume n is even.
+	   FAT n   : get word from (n/2)+n, (n/2)+n+1 => mask the 4 bits of the MSB.
+	   FAT n+1 : get word from (n/2)+n, (n/2)+n+1 => shift right 4 bits.
+	   
+	   =================<PSEUDOCODE>=======================================
+	   cal_FAT:
+	   reg16 entry = (n>>1)+n;           // n/2+n
+	   if( (n & 1)==0 )                  //n is even	     
+		  if( (entry & 0x0fff) == 0xfff ) goto load_binary
+		  else 
+			n= entry;
+			goto cal_FAT;	   
+	   else                             //n is odd	      
+		  if( (entry >> 4) == 0xfff ) goto load_binary
+		  else 
+			n= entry;
+			goto cal_FAT;
+	   
+       ===============<END>=================================================
+	   
+    6. Load the kernel binary into the memory.(address: 0x8000)
+    7. long jump(ljmp) to the address.
+
+E. SUBROUTINE:
+	1. print_msg: just to print the message into the stdout.
+	              using bios interrupt 0x10.
+				  Parameter is %si. It is the address of the message.
+			
+	2. reset_floppy: It is actually a wrapper routine. Just use the bios interrupt mentioned above.
+	
+	3. lba2chs: This is the most important routine in this bootloader.
+				It will change the lba format to the CHS format.
+	            before calling the routine, move the lba number to the global variable lba.
+		        ==========================<FORMULA>===================================
+				C = LBA/(SPT*HPC)
+				H = (LBA/SPT) MOD HPC
+				S = (LBA MOD SPT) +1
+				
+				P.S C => cylinder
+				    H => head
+					S => sector
+					LBA => LBA number
+					SPT => sector per track
+					HPC => head per cylinder
+	
+F. MACRO:
+	there are two macro in the source.
+
+	1. read_disk disk, lba, sector, offset
+		disk: the disk type
+		lba:  the lba number
+		sector: how many sector to read in
+		offset: the offset of the memory.
+	
+	2. reboot: wait a key stroke and reboot the system.
+			
+	
