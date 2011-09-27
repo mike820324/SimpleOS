@@ -44,6 +44,10 @@ qemu
 3. script:
 	there are three scripts in the script folder.
 	a. run.sh: run the qemu and the kernel.
+		   before using the script set the environment variable PROJECT_PATH to the 
+		   root directory.
+		   ex. PROJECT_PATH=`pwd`
+		       export PROJECT_PATH
 	b. dump.sh: dump the binary file for debug.
 	c. debug.sh: generate a debug file for gdb for debug.
 

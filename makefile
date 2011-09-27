@@ -23,11 +23,11 @@ clean:
 	rm -f ./boot/boot.o ./kernel/kernel.o
 
 uninstall:
-	@[ -d ./bin ] && rm -rf ./bin
+	@unset PROJECT_PATH &&\
+	[ -d ./bin ] &&\
+	rm -rf ./bin
 install:
-	@PROJECT_PATH=`pwd` &&\
-	export PROJECT_PATH &&\
-	[ -e ./bin/os.flp ] &&\
+	@[ -e ./bin/os.flp ] &&\
 	echo "remove old virtual flp" &&\
 	rm ./bin/os.flp;\
 	echo "generating fat12 dos file system";\
