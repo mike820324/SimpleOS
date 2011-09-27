@@ -25,7 +25,9 @@ clean:
 uninstall:
 	@[ -d ./bin ] && rm -rf ./bin
 install:
-	@[ -e ./bin/os.flp ] &&\
+	@PROJECT_PATH=`pwd` &&\
+	export PROJECT_PATH &&\
+	[ -e ./bin/os.flp ] &&\
 	echo "remove old virtual flp" &&\
 	rm ./bin/os.flp;\
 	echo "generating fat12 dos file system";\

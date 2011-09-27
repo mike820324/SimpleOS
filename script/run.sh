@@ -4,7 +4,7 @@
 #	
 #	by MicroMike in NCU 2011/08/05
 
-bin_path=../bin/os.flp
+bin_path="$PROJECT_PATH/bin/os.flp"
 
 if [ "$#" == "0" ]; then
 	echo "no option."
