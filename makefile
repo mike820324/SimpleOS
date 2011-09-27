@@ -23,7 +23,7 @@ clean:
 	rm -f ./boot/boot.o ./kernel/kernel.o
 
 uninstall:
-	rm -f ./bin/*
+	@[ -d ./bin ] && rm -rf ./bin
 install:
 	@[ -e ./bin/os.flp ] &&\
 	echo "remove old virtual flp" &&\
