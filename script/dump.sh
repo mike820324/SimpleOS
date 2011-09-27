@@ -2,10 +2,10 @@
 #program:
 #	this program is to dump the debug information
 
-boot_bin=../bin/boot.bin
-ker_bin=../bin/kernel.bin
-flp_bin=../bin/os.flp
-deb_path=../dump
+boot_bin="$PROJECT_PATH/bin/boot.bin"
+ker_bin="$PROJECT_PATH/bin/kernel.bin"
+flp_bin="$PROJECT_PATH/bin/os.flp"
+deb_path="$PROJECT_PATH/dump"
 ker_dump="$deb_path/kernel.dump"
 boot_dump="$deb_path/boot.dump"
 flp_dump="$deb_path/floppy.dump"
@@ -13,8 +13,7 @@ flp_dump="$deb_path/floppy.dump"
 
 
 function dump_check(){
-	[ ! -e "$ker_bin" ] && [ ! -e "$boot_bin" ] && echo "use make first" && exit 0
-	[ ! -e "$flp_bin" ] && echo "use make install first" && exit 0
+	[ ! -e "$ker_bin" ] && [ ! -e "$boot_bin" ] && echo "use make first" && exit 0 [ ! -e "$flp_bin" ] && echo "use make install first" && exit 0
 	[ ! -d dump ] && echo "creating directory" && mkdir dump
 }
 function dump_bin(){
@@ -44,7 +43,7 @@ function dump_all(){
 
 function remove(){	
 	echo "removing dump files"
-	rm ./dump/*
+	[ -d $deb_path ] && rm -rf $deb_path || echo "no dump files"
 }
 
 
