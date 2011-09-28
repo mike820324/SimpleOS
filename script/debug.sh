@@ -4,7 +4,7 @@
 #	
 #	by MicroMike 2011/08/05
 
-gdb_script_name=./command.gdb
+gdb_script_name=$PROJECT_PATH/script/command.gdb
 gdb_command="--command=$gdb_script_name"
 architecture=i8086
 port=1234

@@ -17,7 +17,11 @@ if [ "$1" == "-r" ] || [ "$1" == "--run" ]; then
 fi
 
 if [ "$1" == "-d" ] || [ "$1" == "--debug" ]; then
-	echo "default port 1234"
-	echo "run gdb with target remote localhost:1234"
-	qemu -s -S -fda $bin_path
+	if [ "$2" == "--gdb" ] || [ "$2" == "-g" ]; then
+		qemu -s -S -fda $bin_path & echo "starting gdb..." & $PROJECT_PATH/script/debug.sh
+	else
+		echo "default port 1234"
+		echo "run gdb with target remote localhost:1234"
+		qemu -s -S -fda $bin_path
+	fi
 fi
