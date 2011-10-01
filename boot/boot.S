@@ -66,7 +66,7 @@ start_prog:
 	movw %sp, 4096
 	sti
 
-	movw $0x7c0, %ax
+	movw $0x0, %ax
 	movw %ax, %ds
 	movw %ax, %es
 	

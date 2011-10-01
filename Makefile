@@ -1,17 +1,18 @@
-LD=ld
-CC=gcc
-CFLAGS=-g -Wall -c
-LDFLAGS=-Ttext=0x0 --oformat binary
-
+LD := ld
+CC := gcc
+CFLAGS := -g -Wall -c
+LDBOOT := -T ${PROJECT_PATH}/boot/link.ld   
+LDKERNEL := -T ${PROJECT_PATH}/kernel/link.ld 
+ 
 all: boot.bin kernel.bin
 
 boot.bin: ./boot/boot.o
 	@[ -d ./bin ] || mkdir bin  
-	${LD} ${LDFLAGS} ./boot/boot.o -o ./bin/boot.bin
+	${LD} ${LDBOOT} 
 
 kernel.bin: ./kernel/kernel.o
-	@[ -d ./bin ] || mkdir bin
-	${LD} ${LDFLAGS} ./kernel/kernel.o -o ./bin/kernel.bin
+	@[ -d ./bin ] || mkdir bin 
+	${LD} ${LDKERNEL} 
 
 ./boot/boot.o:
 	${CC} ${CFLAGS} ./boot/boot.S -o ./boot/boot.o
@@ -42,5 +43,4 @@ install:
 	chmod 666 ./bin/os.flp &&\
 	echo "kernel install complete" &&\
 	umount tmp &&\
-	rm  -r tmp;
-
+	rm  -r tmp; 

@@ -1,3 +1,16 @@
+2011/10/01
+1. 
+remove the video.h and some video base code since I decided to 
+move the video code to protected mode. Much more easy to manage.
+2.
+add some code to the kernel, and is can change to pmode.
+3.
+add to link script in both kernel and boot directory.
+4.
+fix some code in boot.S and kernel.S. The set segement register part,
+I decided to use linker to set the offset, and therefore there
+is no need to set segement register in both boot.S and kernel.S.
+
 2011/8/04
 1.Add some macro to handle the string printing and cursor handling
 	a.macro print_char text
