@@ -1,8 +1,8 @@
 LD := ld
 CC := gcc
 CFLAGS := -g -Wall -c
-LDBOOT := -T ${PROJECT_PATH}/boot/link.ld   
-LDKERNEL := -T ${PROJECT_PATH}/kernel/link.ld 
+LDBOOT := -T ./boot/link.ld -M >.boot.map  
+LDKERNEL := -T ./kernel/link.ld -M >.system.map
  
 all: boot.bin kernel.bin
 
@@ -22,9 +22,10 @@ kernel.bin: ./kernel/kernel.o
 
 clean:
 	rm -f ./boot/boot.o ./kernel/kernel.o
+	rm -f ./.system.map
+	rm -f ./.boot.map
 
 uninstall:
-	@unset PROJECT_PATH &&\
 	[ -d ./bin ] &&\
 	rm -rf ./bin
 install:
@@ -43,4 +44,4 @@ install:
 	chmod 666 ./bin/os.flp &&\
 	echo "kernel install complete" &&\
 	umount tmp &&\
-	rm  -r tmp; 
+	rm  -r tmp;

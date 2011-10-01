@@ -54,7 +54,11 @@ if [ "$#" == "0" ]; then
 	exit 0
 fi
 
-
+if [ "$PROJECT_PATH" == "" ]; then
+	echo "there is no root path(PROJECT_PATH)"
+	echo "more information, read README"
+	exit 0
+fi
 if [ "$1" == "--dump" ] || [ "$1" == "-d" ]; then
 	dump_all
 fi
@@ -62,5 +66,5 @@ fi
 if [ "$1" == "--remove" ] || [ "$1" == "-r" ]; then
 	remove	
 	echo "all done"
-	exit 1
+	exit 0
 fi

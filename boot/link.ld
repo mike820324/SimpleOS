@@ -1,5 +1,6 @@
 OUTPUT_FORMAT("binary")
-INPUT(boot/boot.o)
+SEARCH_DIR("boot")
+INPUT(boot.o)
 ENTRY(main)
 OUTPUT(bin/boot.bin)
 SECTIONS
@@ -11,10 +12,5 @@ SECTIONS
 	.data :
 	{
 		*(.data)
-	}
-	
-	.bss :
-	{
-		*(.bss)
 	}
 }
