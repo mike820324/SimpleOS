@@ -1,3 +1,8 @@
+2011/10/02
+1.
+add a gdt table for the kernel.
+2.
+modify some of the scripts.
 2011/10/01
 1. 
 remove the video.h and some video base code since I decided to 
