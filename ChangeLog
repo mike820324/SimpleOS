@@ -3,9 +3,9 @@
 remove the video.h and some video base code since I decided to 
 move the video code to protected mode. Much more easy to manage.
 2.
-add some code to the kernel, and is can change to pmode.
+add some code to the kernel, and ready change to pmode.
 3.
-add to link script in both kernel and boot directory.
+add two link script in both kernel and boot directory.
 4.
 fix some code in boot.S and kernel.S. The set segement register part,
 I decided to use linker to set the offset, and therefore there
