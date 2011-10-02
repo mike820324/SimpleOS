@@ -4,17 +4,21 @@ ENTRY(kernel_start)
 OUTPUT(kernel.bin)
 SECTIONS
 {
-	.text16 0x8000:
+	.text16 0x0:
 	{
 		kernel16.o(.text);
 	}
-	.data16 0x8200:
+	.data16 0x200:
 	{
 		kernel16.o(.data);
 	}
-	.text32 0x8400:
+	.text32 0x400:
 	{
 		kernel32.o(.text)
+	}
+	.data32 0x600:
+	{
+		kernel32.o(.data)
 	}
 }
 

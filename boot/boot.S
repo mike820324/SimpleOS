@@ -148,9 +148,17 @@ load_kernel:
 	movw $0x800, %ax
 	movw %ax, %es
 	read_disk $0, %bx, sector, $0
-	
-goto_kernel: 
-	ljmp $0x0, $0x8000
+
+set_video_mode:
+	movw $0x3, %ax
+	int $0x10	
+goto_kernel:
+#the following code is just like
+#ljmpl $0x0, $0x90000
+	#.byte 0x66, 0xea
+	#.long 0x90000
+	#.word 0x0 
+	ljmp $0x800, $0x0
 
 error_exit:
 	movw $err, %si

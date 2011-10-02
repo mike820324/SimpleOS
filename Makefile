@@ -26,7 +26,8 @@ install:
 	rm -rf ./bin ||\
 	mkdir ./bin;
 	[ -d tmp ] &&\
-	mv tmp/*.bin ./bin;
+	mv tmp/*.bin ./bin &&\
+	chmod 666 ./bin/*.bin;
 	echo "generating fat12 dos file system";\
 	mkdosfs -C ./bin/os.flp 1440 &&\
 	echo "installing the bootloader" &&\

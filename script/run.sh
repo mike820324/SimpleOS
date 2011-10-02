@@ -48,16 +48,16 @@ else
 	
 	if [ "$debugflag" == "true" ]; then
 		if [ "$gdbflag" == "true" ]; then
-			qemu -s -S -fda $bin_path & 
+			qemu -s -S -fda $bin_path -m 64 & 
 			echo "starting gdb..." &
 			$PROJECT_PATH/script/debug.sh
 		else 
 			echo "default port 1234"
 			echo "run gdb with target remote localhost:1234"
-			qemu -s -S -fda $bin_path
+			qemu -s -S -fda $bin_path -m 64
 		fi
 	else
 		echo "start running qemu with no debug mode enable"
-		qemu -fda $bin_path
+		qemu -fda $bin_path -m 64
 	fi	
 fi
