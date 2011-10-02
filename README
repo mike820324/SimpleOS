@@ -17,10 +17,10 @@ qemu
 	contains the change log and some refernce document.
 
 	d. bin: Directory
-	contains the binary files of the project.
+	contains the binary files of the project. (After using make)
 	
 	e. dump: Directory
-	contains the dump files of the project.
+	contains the dump files of the project. (After using dump.sh)
 
 	f. makefile: script
 	the makefile of the project.
@@ -30,16 +30,19 @@ qemu
 	
 	h. readme: text
 	you are now looking at it. :p
+	
+	i. tmp: Directory
+	contains the the map file and binary file after make.
+	do not remove the directory after you make install.
 
 2. makefile:
-	there are four additional option of this makefile.
+	there are three additional option of this makefile.
 	a. clean: clean the obj files.
 	b. uninstall: clean the binary files conatin in the bin directory.
 	c. install: create the os.flp virtual floppy disk.
 		    and also install the bootloader and kernel to it.
-	P.S when using make install plz use root. I need to 
-	    mount the floppy into a directory, 
-	    therefore need root privelege.
+	P.S when using make install and make uninstall plz use root.
+	I need to  mount the floppy into a directory, therefore need root privelege.
 
 3. script:
 	there are three scripts in the script folder.

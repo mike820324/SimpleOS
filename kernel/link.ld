@@ -1,16 +1,20 @@
 OUTPUT_FORMAT("binary")
-INPUT(kernel/kernel.o)
+INPUT(kernel16.o kernel32.o)
 ENTRY(kernel_start)
-OUTPUT(bin/kernel.bin)
+OUTPUT(kernel.bin)
 SECTIONS
 {
 	.text16 0x8000:
 	{
-		kernel/kernel.o(.text);
+		kernel16.o(.text);
 	}
 	.data16 0x8200:
 	{
-		kernel/kernel.o(.data);
+		kernel16.o(.data);
+	}
+	.text32 0x8400:
+	{
+		kernel32.o(.text)
 	}
 }
 

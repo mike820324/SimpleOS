@@ -41,7 +41,7 @@ flush:
 #the jmpi 0x100000, 8
 goto_code_32:
 	.byte 0x66, 0xea
-	.long 0x10000
+	.long 0x8400
 	.word 0x8
 .section .data
 #boot_gdt
