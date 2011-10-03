@@ -87,9 +87,11 @@ a20_done:
 #load the gdt and prepare to go to protected mode
 load_gdt:
 	lgdt gdtr
+	
 #this part is reference from linux source code
-#we mask up the irq, since we are going to the pmode,
-#the bios interrupt is no use.
+#mask the irq in both mater PIC and slave PIC, except the IRQ 2
+#The IRQ 2 is the default IRQ that connect master and slave
+#After that we have no IO connection
 mask_irq:
 	mov $0xff, %al
 	out %al, $0xa1
