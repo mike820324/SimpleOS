@@ -145,7 +145,7 @@ load_kernel:
 	subw sector, %bx
 	incw %bx
 	addw $31, %bx
-	movw $0x800, %ax
+	movw $0x9000, %ax
 	movw %ax, %es
 	read_disk $0, %bx, sector, $0
 
@@ -158,7 +158,7 @@ goto_kernel:
 	#.byte 0x66, 0xea
 	#.long 0x90000
 	#.word 0x0 
-	ljmp $0x800, $0x0
+	ljmp $0x9000, $0x0
 
 error_exit:
 	movw $err, %si

@@ -12,3 +12,5 @@ boot.o: boot.S
 	${CC} ${ASFLAGS} -o boot.o boot.S
 	cp boot.o boot_debug.o
 	objcopy -j .text boot.o
+clean:
+	rm *.o *.map

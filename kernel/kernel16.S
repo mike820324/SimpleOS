@@ -6,7 +6,7 @@ kernel16_start:
 #since there is no call function at all
 #there is no need to set the stack segment and stack pointer again.	
 	cli
-	movw	$0x800, %ax
+	movw	$0x9000, %ax
 	movw	%ax, %ds
 	movw	%ax, %es
 	sti
@@ -31,7 +31,7 @@ we need to short jmp to clear prefetch queue.
 #the jmpi prepare32, 8
 goto_code_32:
 	.byte 0x66, 0xea
-	.long prepare32+0x8000
+	.long prepare32+0x90000
 	.word 0x8
 .code32
 #the code right now is at 0x90022.
@@ -47,11 +47,14 @@ prepare32:
 	mov %ax, %fs
 	mov %ax, %gs
 #move the kernel32 code and data into 0x100000
-	mov $0x8400, %esi
+	mov $0x90300, %esi
 	mov $0x100000, %edi
 	mov $0x100, %ecx
 	rep movsd		
-	ljmp $0x8, $0x100000	
+	ljmp $0x8, $0x100000
+code_end:
+	
+#16 bit data section start at 0x90200
 .section .data
 
 gdtr:
@@ -60,7 +63,7 @@ gdtr:
 #base field
 #the code is actually gdtr+6
 #since gdtr is 48bits(6 bytes)
-.long 0x8206
+.long boot_gdt+0x90000
 
 #boot_gdt
 boot_gdt:
@@ -76,4 +79,4 @@ boot_gdt:
 .word 0x9200
 .word 0x00cf	
 boot_gdt_end:
-
+.fill 0xe2, 1, 0

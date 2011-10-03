@@ -1,3 +1,15 @@
+2011/10/03
+1.
+change the boot.S code. Now the kernel code is loaded in 0x90000.
+And a long jump jumps to it.
+2.
+change the kernel into two parts one is kernel16 and another is kernel32.
+kernel16 is the setup code which will change the system into protected mode
+and move the kernel32 code to 0x100000.
+3.
+kernel32 is the first code written in C in this project. Now it will only
+print a hello world!! in the screen. :P
+
 2011/10/02
 1.
 add a gdt table for the kernel.
