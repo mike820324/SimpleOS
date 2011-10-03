@@ -12,5 +12,9 @@ SECTIONS
 	{
 		kernel32.o(.data)
 	}
+	.bss 0x100300:
+	{
+		kernel32.o(.bss)
+	}
 }
 

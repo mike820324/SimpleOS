@@ -4,7 +4,7 @@ CFLAGS := -c -g -Wall -ffreestanding
 ASFLAGS := -c -g
 RLDFLAGS := -T link/link16.ld -M > map/k16.map
 KLDFLAGS := -T link/link32.ld -M > map/k32.map
-SECTIONS := -j .text -j .data
+SECTIONS := -j .text -j .data -j .bss
 
 all: kernel.bin
 
@@ -24,7 +24,7 @@ kernel16.o: kernel16.S
 	${CC} ${ASFLAGS} -o kernel16.o kernel16.S
 	cp kernel16.o k16_debug.o
 	objcopy ${SECTIONS} kernel16.o
-kernel32.o: kernel32.c
+kernel32.o: kernel32.c include/System.h
 	${CC} ${CFLAGS} -o kernel32.o kernel32.c
 	cp kernel32.o k32_debug.o
 	objcopy ${SECTIONS} kernel32.o

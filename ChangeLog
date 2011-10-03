@@ -1,3 +1,17 @@
+2011/10/04
+1.
+add the enable a20 in kernel16.S. Enable the a20 is important when change
+from realmode to pmode.
+2.
+add mem820 in kernel16.S. Now the kernel can know the status of the physical memory.
+3.
+mask almost all the irq except one.
+Will load the idt in the future.
+4.
+add a flush_screen function to clear the screen.
+5. 
+add a strcture mem820 to handle the physical memory status.
+
 2011/10/03
 1.
 change the boot.S code. Now the kernel code is loaded in 0x90000.
