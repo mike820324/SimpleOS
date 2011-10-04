@@ -87,7 +87,6 @@ a20_done:
 #load the gdt and prepare to go to protected mode
 load_gdt:
 	lgdt gdtr
-<<<<<<< HEAD
 #this part is reference from old linux source code
 #we remap the pic and mask the irq temporaily.
 remap_pic:
@@ -126,13 +125,11 @@ remap_pic:
 pic_remap_end:
 
 #mask the irq line temporarily	
-=======
 	
 #this part is reference from linux source code
 #mask the irq in both mater PIC and slave PIC, except the IRQ 2
 #The IRQ 2 is the default IRQ that connect master and slave
 #After that we have no IO connection
->>>>>>> 65bb338f67606ef71acfda57295ba203464beec8
 mask_irq:
 	mov $0xff, %al
 	out %al, $0xa1
