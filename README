@@ -34,6 +34,9 @@ qemu
 	i. tmp: Directory
 	contains the the map file and binary file after make.
 	do not remove the directory after you make install.
+	
+	j. tools: Directory
+	contains the tools to install the kernel.
 
 2. makefile:
 	there are three additional option of this makefile.
@@ -41,8 +44,8 @@ qemu
 	b. uninstall: clean the binary files conatin in the bin directory.
 	c. install: create the os.flp virtual floppy disk.
 		    and also install the bootloader and kernel to it.
-	P.S when using make install and make uninstall plz use root.
-	I need to  mount the floppy into a directory, therefore need root privelege.
+	P.S I write a new program which will generate the floppy disk format, use it to generate
+	the floppy disk
 
 3. script:
 	there are three scripts in the script folder.
