@@ -87,9 +87,44 @@ a20_done:
 #load the gdt and prepare to go to protected mode
 load_gdt:
 	lgdt gdtr
-#this part is reference from linux source code
-#we mask up the irq, since we are going to the pmode,
-#the bios interrupt is no use.
+#this part is reference from old linux source code
+#we remap the pic and mask the irq temporaily.
+remap_pic:
+#initial the IO remap
+	movb $0x11, %al
+	outb %al, $0x20
+	call delay
+	
+	movb $0x11, %al
+	outb %al, $0xa0
+	call delay
+#remap the master pic vector offset to 0x20
+	movb $0x20, %al
+	outb %al, $0x21
+	call delay
+#rempa the slave pic vector offset to 0x28
+	movb $0x28, %al
+	outb %al, $0xa1
+	call delay
+
+#let the irq2 of master pic connect to the slave pic
+	movb $0x4, %al
+	outb %al, $0x21
+	call delay
+	movb $0x2, %al
+	outb %al, $0xa1
+	call delay
+
+	movb $0x01, %al
+	outb %al, $0x21
+	call delay
+	movb $0x01, %al
+	outb %al, $0xa1
+	call delay
+#now the interrupt of IRQ 0~7 is 0x20~0x27 and IRQ 8~15 is at 0x28~0x2f
+pic_remap_end:
+
+#mask the irq line temporarily	
 mask_irq:
 	mov $0xff, %al
 	out %al, $0xa1

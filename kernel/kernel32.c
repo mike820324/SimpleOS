@@ -5,10 +5,10 @@ char hello[]= "hello world";
 
 void main(){
 	printk(hello);
-	flush_screen();
+	//flush_screen();
 	calculate_phys();
 	__asm__("hlt");	
-	for(;;);
+	//for(;;);
 }
 void flush_screen(){
 	char *ptr = 0xb8000;
