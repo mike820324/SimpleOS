@@ -1,6 +1,7 @@
-extern void printk(char *text);
+#ifndef MEMORY_H
+#define MEMORY_H
 extern void calculate_phys();
-extern void clear_screen();
+
 struct memory820 {
 	long long base;
 	long long dest;
@@ -9,3 +10,4 @@ struct memory820 {
 
 typedef struct memory820 mem820_struct;
 
+#endif
