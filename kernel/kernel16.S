@@ -21,7 +21,7 @@ kernel16_start:
 #and will be move to 0x100000.
 mem820:
 	xorl 	%ebx, %ebx
-	movw 	$MEM802_ADD, %di
+	movw 	$mem820_entry, %di
 start_mem820:
 	movl 	$0x0000e820, %eax
 	movl 	$0x534d4150, %edx
@@ -225,7 +225,7 @@ prepare32:
 	mov 	%ax, %fs
 	mov 	%ax, %gs
 #move the kernel32 code and data into 0x100000
-	mov 	$0x90300, %esi
+	mov 	$KERNEL16_OFFSET+kernel32_code_start, %esi
 	mov 	$0x100000, %edi
 	mov 	$0x100, %ecx
 	rep 	movsl		
@@ -257,4 +257,6 @@ boot_gdt:
 .word 0x9200
 .word 0x00cf	
 boot_gdt_end:
-.org 0x100, 0
+mem820_entry:
+.fill 128, 20, 0
+kernel32_code_start:

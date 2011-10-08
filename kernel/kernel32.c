@@ -2,7 +2,7 @@
 #include "include/video.h"
 
 mem820_struct physical_memory[128];
-char hello[]= "hello world";
+char hello[]= "Hello World!!";
 
 void main(){
 	printk(hello);

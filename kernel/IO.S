@@ -14,3 +14,16 @@ outb:
 	
 	leave
 	ret
+.global inb
+.type inb, @function
+inb:
+	push	%ebp
+	movl	%esp,%ebp
+
+	xor	%eax,%eax
+	movl	0xc(%ebp), %edx
+
+	inb	%dx, %al
+
+	leave
+	ret

@@ -114,6 +114,7 @@ void write_FAT(unsigned int start, unsigned int end, unsigned int kernel_size,fp
 	unsigned int loop;
 //the init fat number is always 3;
 	short unsigned int init_fat_num = 3;
+	short unsigned int temp_fat;
 	char *ptr = &init_fat_num;
 	unsigned char buffer[3] = { 0, 0, 0};
 	unsigned int fat_loop=0;
@@ -137,10 +138,12 @@ void write_FAT(unsigned int start, unsigned int end, unsigned int kernel_size,fp
 			buffer[0] = (char)*(ptr);
 			buffer[1] = (char)*(ptr+1);	
 			init_fat_num++;
+			temp_fat = init_fat_num;
 			init_fat_num = init_fat_num << 4;
 			buffer[1] = buffer[1] + (char)(*ptr);
 			buffer[2] = (char)*(ptr+1);
 			fwrite(buffer,1,3,output);
+			init_fat_num = (++temp_fat);
 		}
 		
 		init_fat_num = 0xfff;
@@ -171,6 +174,7 @@ void write_FAT(unsigned int start, unsigned int end, unsigned int kernel_size,fp
 					buffer[1] += (char)(*ptr);
 					buffer[2] = (char)*(ptr+1);
 					fwrite(buffer,1,3,output);
+					init_fat_num = init_fat_num >> 4;
 				}
 				
 			}

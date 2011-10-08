@@ -25,7 +25,7 @@ void printk(char *string){
 			column = 0;
 		} 
 	}
-	//update_cursor();
+	update_cursor();
 }
 
 void clear_screen(){
@@ -40,13 +40,12 @@ void clear_screen(){
 //reset the coordinate variable
 	column = 0;
 	row = 0;
-	//update_cursor();
+	update_cursor();
 }
-/*
 //update the cursor...
 void update_cursor(){
 	unsigned short position;
-	position = coor2mem;
+	position = row*80+column;
 //set the low port
 	outb(CURSOR_COMMAND_PORT, 0xf);
 	outb(CURSOR_INPUT_PORT, (unsigned char)(position&0xff));
@@ -55,5 +54,4 @@ void update_cursor(){
 	outb(CURSOR_INPUT_PORT, (unsigned char)((position>>8)&0xff));
 	
 }
-*/
 
