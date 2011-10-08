@@ -5,6 +5,7 @@ ASFLAGS := -c -g
 RLDFLAGS := -T link/link16.ld -M > map/k16.map
 KLDFLAGS := -T link/link32.ld -M > map/k32.map
 SECTIONS := --strip-debug --strip-unneeded
+INC := -Iinclude
 
 all: kernel.bin
 
@@ -27,6 +28,7 @@ kernel16.o: kernel16.S
 kernel32.o: kernel32.c include/memory.h include/video.h
 	${CC} ${CFLAGS} -o kernel32.o kernel32.c
 	cp kernel32.o k32_debug.o
+	objcopy ${SECTIONS} kernel32.o
 	
 video.o: video.c include/video.h
 	${CC} ${CFLAGS} -o video.o video.c
@@ -34,6 +36,8 @@ video.o: video.c include/video.h
 	objcopy ${SECTIONS} video.o
 IO.o: IO.S
 	${CC} ${ASFLAGS} -o IO.o IO.S
+	cp IO.o IO_debug.o
+	objcopy ${SECTIONS} IO.o
 clean:
 	rm *.o
 	rm -rf map
