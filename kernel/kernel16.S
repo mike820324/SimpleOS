@@ -257,4 +257,4 @@ boot_gdt:
 .word 0x9200
 .word 0x00cf	
 boot_gdt_end:
-.fill 0xe2, 1, 0
+.org 0x100, 0
