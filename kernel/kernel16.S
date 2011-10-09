@@ -1,3 +1,6 @@
+#the kernel16.S suppose to setup the environment for the protected mode,
+#and load the kernel32 code to 0x100000 and long jump to it.
+
 KERNEL16_SEG = 0x9000 
 KERNEL16_OFFSET = 0X90000
 MEM802_ADD = 0X600 

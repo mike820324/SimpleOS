@@ -7,10 +7,11 @@
 #define CURSOR_COMMAND_PORT 0x3d4
 #define CURSOR_INPUT_PORT 0x3d5
 
-#define coor2mem row*80+column*2
+#define coor2mem row*160+column*2
 
 
 extern void printk(char *text);
+extern void change_line();
 extern void clear_screen();
 extern void update_cursor();
 

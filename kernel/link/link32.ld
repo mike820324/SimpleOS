@@ -13,6 +13,7 @@ SECTIONS
 	.data :
 	{
 		kernel32.o(.data)
+		kernel32.o(.rodata)
 		video.o(.data)
 	}
 	.bss :

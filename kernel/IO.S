@@ -1,9 +1,12 @@
+#The IO.S contains the low level instruction that c can not achieve.
+#Such as in and out instruction, cli, sti and so on.
+
 .code32
 .section .text
 
-.global outb
-.type outb, @function
-outb:
+.global io_outb
+.type io_outb, @function
+io_outb:
 	push	%ebp
 	movl	%esp,%ebp
 #get the first parameter, which is the port number
@@ -14,9 +17,9 @@ outb:
 	
 	leave
 	ret
-.global inb
-.type inb, @function
-inb:
+.global io_inb
+.type io_inb, @function
+io_inb:
 	push	%ebp
 	movl	%esp,%ebp
 

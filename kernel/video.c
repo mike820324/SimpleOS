@@ -27,7 +27,14 @@ void printk(char *string){
 	}
 	update_cursor();
 }
-
+//change line
+void change_line(){
+	extern unsigned int column;
+	extern unsigned int row;
+	row++;
+	column = 0;
+	
+}
 void clear_screen(){
 	extern unsigned int column;
 	extern unsigned int row;
@@ -45,13 +52,14 @@ void clear_screen(){
 //update the cursor...
 void update_cursor(){
 	unsigned short position;
+//80 character per row
 	position = row*80+column;
 //set the low port
-	outb(CURSOR_COMMAND_PORT, 0xf);
-	outb(CURSOR_INPUT_PORT, (unsigned char)(position&0xff));
+	io_outb(CURSOR_COMMAND_PORT, 0xf);
+	io_outb(CURSOR_INPUT_PORT, (unsigned char)(position&0xff));
 //set the hign port
-	outb(CURSOR_COMMAND_PORT, 0xe);
-	outb(CURSOR_INPUT_PORT, (unsigned char)((position>>8)&0xff));
+	io_outb(CURSOR_COMMAND_PORT, 0xe);
+	io_outb(CURSOR_INPUT_PORT, (unsigned char)((position>>8)&0xff));
 	
 }
 

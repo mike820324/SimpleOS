@@ -31,5 +31,7 @@ install:
 	mkdir bin
 	mv ./tmp/*.bin ./bin
 	mv ./tmp/os.flp ./bin
+	@echo "generating iso file....."
+	(cd bin; mkisofs -V 'SIMPLEOS' -input-charset iso8859-1 -o SimpleOS.iso -b os.flp ./)
 	 
 	
