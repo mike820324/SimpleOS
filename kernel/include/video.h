@@ -7,7 +7,8 @@
 #define CURSOR_COMMAND_PORT 0x3d4
 #define CURSOR_INPUT_PORT 0x3d5
 
-#define coor2mem row*160+column*2
+#define COOR2POS (row*80+column)
+#define POS2MEM	 2*COOR2POS
 
 
 extern void printk(char *text);

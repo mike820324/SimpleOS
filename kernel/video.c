@@ -17,8 +17,8 @@ void printk(char *string){
 	char *video_ptr=VIDEO_BASE;
 	unsigned int loop;
 	for(loop = 0; string[loop]!=0; loop++){
-		video_ptr[coor2mem] = string[loop];
-		video_ptr[coor2mem+1] = 0xe;
+		video_ptr[POS2MEM] = string[loop];
+		video_ptr[POS2MEM+1] = 0xe;
 		column++;
 		if(column >= COLUMN_MAX){
 			row++;
@@ -53,7 +53,7 @@ void clear_screen(){
 void update_cursor(){
 	unsigned short position;
 //80 character per row
-	position = row*80+column;
+	position = COOR2POS;
 //set the low port
 	io_outb(CURSOR_COMMAND_PORT, 0xf);
 	io_outb(CURSOR_INPUT_PORT, (unsigned char)(position&0xff));
