@@ -1,5 +1,7 @@
-//the kernel32.c is 32 bits code which is suppose to setup everything and 
-//start the init process.
+/*
+ * The kernel32.c is the first 32 bits code in this OS. 
+ * Init environment and everything the OS need.
+ */
 #include "include/memory.h"
 #include "include/video.h"
 

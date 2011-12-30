@@ -1,10 +1,10 @@
-//this code contains some function that is associated with the
-//video.
-//I use the 80x25 text mode, therefore the base address is at 0xb8000
-//and the size is 80x25.
-//
-//Author MicroMike
-//Time 2011/10/5
+/*
+ * A very simple video driver under 80x25 text mode.
+ * More detailed about 80x25 text mode can be found in osdev wiki. :)
+ *
+ * Author MicroMike
+ * First created time: 2011/10/5
+ */
 
 #include "include/video.h"
 
@@ -27,7 +27,7 @@ void printk(char *string){
 	}
 	update_cursor();
 }
-//change line
+/* Change a new line */
 void change_line(){
 	extern unsigned int column;
 	extern unsigned int row;
@@ -35,29 +35,29 @@ void change_line(){
 	column = 0;
 	
 }
+/* clear the screen */
 void clear_screen(){
 	extern unsigned int column;
 	extern unsigned int row;
 	unsigned int loop;
 	char *video_ptr=VIDEO_BASE;
-//clear the sreen memory
+	/* clear the screen memory */
 	for(loop=0; loop<ROW_MAX*COLUMN_MAX*2; loop++){
 		*(video_ptr+loop) = 0;	
 	}
-//reset the coordinate variable
+	/* reset the coordinate global variables */
 	column = 0;
 	row = 0;
 	update_cursor();
 }
-//update the cursor...
+/* update the cursor */
 void update_cursor(){
 	unsigned short position;
-//80 character per row
-	position = COOR2POS;
-//set the low port
+	position = COOR2POS; /* get the postion by calling macro */
+	/* set the low port */
 	io_outb(CURSOR_COMMAND_PORT, 0xf);
 	io_outb(CURSOR_INPUT_PORT, (unsigned char)(position&0xff));
-//set the hign port
+	/* set the high port */
 	io_outb(CURSOR_COMMAND_PORT, 0xe);
 	io_outb(CURSOR_INPUT_PORT, (unsigned char)((position>>8)&0xff));
 	

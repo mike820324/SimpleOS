@@ -1,12 +1,13 @@
 /*
-The program will generate a floppy disk(1.4 mb) with bootloader and kernel installed.
-Some of the function are also the file system drivers.
-Require two input files:
-boot.bin and kernel.bin in the same folder.
-the output file name is os.flp.
-
-Author: MicroMike
-Time: 2011/10/05
+ * The program will generate a floppy disk(1.4 mb) with bootloader
+ * and kernel installed.
+ * Some of the function are also the file system drivers.
+ * Require two input files:
+ * boot.bin and kernel.bin in the same folder.
+ * the output file name is os.flp.
+ * 
+ * Author: MicroMike
+ * Time: 2011/10/05
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,23 +17,24 @@ Time: 2011/10/05
 #define RootDir_start 0x2600
 #define Data_start 0x4200
 #define Floppy_end 0x168000
-
+/* This is the RootDir structure of the FAT 12 */
 struct RootDir{
-	//this field should be 11 bytes.
+	/* this field should be 11 bytes. */
 	char *name;
 	char attribute;
 	char reserve[10];
 	char create_time[2];
 	char modify_time[2];
 	char FAT_pointer[2];
-	//this field is exactly 4 bytes long.
+	/* this field is exactly 4 bytes long. */
 	unsigned int *size;
 };
 typedef struct RootDir RootDir_struct;
 
 void write_kernel_dir(fpos_t kernel_dir);
 void init_kernel_dir(unsigned int *kernel_length);
-void write_FAT(unsigned int start, unsigned int end,unsigned int kernel_size,fpos_t FAT_addr);
+void write_FAT(	unsigned int start, unsigned int end,
+		unsigned int kernel_size,fpos_t FAT_addr);
 void write_empty_FAT(unsigned int start, unsigned int end);
 
 RootDir_struct kernel;
@@ -49,7 +51,7 @@ int main(){
 	fpos_t FAT2_addr;
 	unsigned int kernel_length=0;
 
-//start to write the file
+	/* start to write the file */
 	input_kernel = fopen("./kernel.bin","rb");	
 	input_boot = fopen("./boot.bin","rb");
 	if(input_kernel==NULL || input_boot==NULL){
@@ -57,26 +59,27 @@ int main(){
 		exit(1);
 	}
 	output = fopen("./os.flp", "wb");
-//install the bootloader
+	/* install the bootloader */
 	for(loop=0;loop<0x200;loop++){
 		buffer = fgetc(input_boot);
 		putc(buffer,output);
 	}
-//write the FAT1
+	/* write FAT1 */
 	fgetpos(output,&FAT1_addr);
 	write_empty_FAT(FAT1_start, FAT2_start);
-//write the FAT2
+
+	/* write FAT2 */
 	fgetpos(output,&FAT2_addr);
 	write_empty_FAT(FAT2_start, RootDir_start);
 
-//get the current position for future usage
+	/* get current positions */
 	fgetpos(output, &kernel_dir);
-//this is the root directory
+	/* the RootDir starts here */
 	for(loop=RootDir_start;loop<0x4200;loop++){
 		putc(0,output);	
 	}
 
-//this is the data section of the floppy
+	/* data section of the FAT 12 */
 	while(1){
 		buffer = fgetc(input_kernel);
 		if(feof(input_kernel)) break;	
@@ -87,20 +90,20 @@ int main(){
 	for(loop=Data_start+kernel_length;loop<Floppy_end;loop++){
 		putc(0,output);
 	}
-//setup the FAT1 for the kernel
+	/* setup the FAT1 for the kernel */
 	write_FAT(FAT1_start,FAT2_start,kernel_length,FAT1_addr);
-//setup the FAT2 for the kernel
+	/* setup the FAT2 for the kernel */
 	write_FAT(FAT2_start,RootDir_start,kernel_length,FAT2_addr);
-//time to setup the kernel root directory table	
+	/* time to setup the kernel root directory table */
 	init_kernel_dir(&kernel_length);
-//write the kernel directory 
+	/* write the kernel directory */
 	write_kernel_dir(kernel_dir);
-//close all the FILE pointer
+	/* close all the FILE pointer */
 	fclose(output);
 	fclose(input_boot);
 	fclose(input_kernel);
 }
-//write an empty FAT. Just a for loop.
+/* write an empty FAT */
 void write_empty_FAT(unsigned int start, unsigned int end){
 	unsigned int loop;
 	for(loop=start;loop<end;loop++){
@@ -108,31 +111,31 @@ void write_empty_FAT(unsigned int start, unsigned int end){
 	}
 }
 /*
-the function is to set the FAT table for the floppy
-*/
+ * the function is to set the FAT table for the floppy
+ */
 void write_FAT(unsigned int start, unsigned int end, unsigned int kernel_size,fpos_t FAT_addr){
 	unsigned int loop;
-//the init fat number is always 3;
+	/* the init number is always three */
 	short unsigned int init_fat_num = 3;
 	short unsigned int temp_fat;
 	char *ptr = &init_fat_num;
 	unsigned char buffer[3] = { 0, 0, 0};
 	unsigned int fat_loop=0;
-//the first three bytes of the FAT is never change
+	/* the first three bytes of the FAT is never change */
 	fsetpos(output,&FAT_addr);
 	putc(0xf0,output);
 	putc(0xff,output);
 	putc(0xff,output);
 
 
-//calculate how many fat the kernel is using
+	/* calculate how many FAT the kernel image is using */
 	if(kernel_size%0x200==0){
 		fat_loop = kernel_size/0x200;	
 	}
 	else {
 		fat_loop = kernel_size/0x200+1;
 	}
-//fat_loop is odd
+	/* fat_loop is odd */
 	if(fat_loop%2 == 1) {
 		for(loop =1; loop<fat_loop-1; loop*=2){
 			buffer[0] = (char)*(ptr);
@@ -153,12 +156,12 @@ void write_FAT(unsigned int start, unsigned int end, unsigned int kernel_size,fp
 		buffer[1] += (char)(*ptr);
 		buffer[2] = (unsigned char)*(ptr+1);
 		fwrite(buffer,1,3,output);
-//write the rest of the FAT	
+		/* write the rest of the FAT */	
 		for(loop=start+((fat_loop+1)/2+1)*3;loop<end;loop++){
 				putc(0,output);
 		}
 	}
-//fat loop is even
+	/* FAT loop is even */
 	else {
 		if(fat_loop == 0){
 			printf("the kernel size is zero?!\n");
@@ -167,8 +170,8 @@ void write_FAT(unsigned int start, unsigned int end, unsigned int kernel_size,fp
 			for(loop=1; loop<fat_loop; loop*=2){
 				buffer[0] = (char) *(ptr);
 				buffer[1] = (char) *(ptr+1);
-//check if it will out of bound
-				if(loop*2<fat_loop){
+				
+				if(loop*2<fat_loop){ /* check if it will out of bound */
 					init_fat_num++;
 					init_fat_num = init_fat_num << 4;
 					buffer[1] += (char)(*ptr);
@@ -182,7 +185,7 @@ void write_FAT(unsigned int start, unsigned int end, unsigned int kernel_size,fp
 			buffer[1] += (char)*(ptr);
 			buffer[2] = (char)*(ptr+1);
 			fwrite(buffer,1,3,output);
-//write the rest of the FAT	
+			/* write the rest of the FAT */
 			for(loop=start+((fat_loop/2)+1)*3;loop<end;loop++){
 					putc(0,output);
 			}
@@ -190,7 +193,7 @@ void write_FAT(unsigned int start, unsigned int end, unsigned int kernel_size,fp
 	}
 }
 
-//initialize the root directory structure for the kernel
+/* initialize the root directory structure for the kernel */
 void init_kernel_dir(unsigned int *kernel_length){
 	unsigned int loop;
 	kernel.name="KERNEL  BIN";	
@@ -207,7 +210,7 @@ void init_kernel_dir(unsigned int *kernel_length){
 	kernel.size=kernel_length;
 }
 
-//write the kernel structure to the root directory
+/* write the kernel structure to the root directory */
 void write_kernel_dir(fpos_t kernel_dir){
 	fsetpos(output,&kernel_dir);
 	fwrite(kernel.name,1,11,output);
